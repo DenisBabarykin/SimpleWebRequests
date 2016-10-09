@@ -16,5 +16,9 @@
     <tags>REST request web simple requests get post dynamic json .net</tags>
 	<language>en-us</language>
 	<references>$references$</references>
+	<dependencies>
+      <dependency id="Newtonsoft.Json" version="9.0.1" />
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
+    </dependencies>
   </metadata>
 </package>
