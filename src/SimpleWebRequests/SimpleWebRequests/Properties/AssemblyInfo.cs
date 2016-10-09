@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SimpleWebRequests")]
-[assembly: AssemblyDescription("Package for simple web requests")]
+[assembly: AssemblyDescription("Package for simple web requests. Allows to asynchronously send GET and POST requests with one line of code and get response in dynamic object.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Denis Babarykin")]
 [assembly: AssemblyProduct("SimpleWebRequests")]

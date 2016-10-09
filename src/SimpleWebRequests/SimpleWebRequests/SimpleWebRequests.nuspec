@@ -11,7 +11,7 @@
     <iconUrl>https://raw.githubusercontent.com/DenisBabarykin/SimpleWebRequests/master/nuget_icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>First release.</releaseNotes>
+    <releaseNotes>Synchronous and generic versions of methods added. Names of methods improved</releaseNotes>
     <copyright>Copyright 2016 Denis Babarykin</copyright>
     <tags>REST request web simple requests get post dynamic json .net</tags>
 	<language>en-us</language>
