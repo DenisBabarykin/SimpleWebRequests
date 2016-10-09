@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>DenisBabarykin</owners>
+    <licenseUrl>https://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/DenisBabarykin/SimpleWebRequests</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/DenisBabarykin/SimpleWebRequests/master/nuget_icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>First release.</releaseNotes>
+    <copyright>Copyright 2016 Denis Babarykin</copyright>
+    <tags>REST request web simple requests get post dynamic json .net</tags>
+	<language>en-us</language>
+	<references>$references$</references>
+  </metadata>
+</package>
