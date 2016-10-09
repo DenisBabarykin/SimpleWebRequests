@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace SimpleWebRequests
+namespace SimpleWebRequests.Converters
 {
+    /// <summary>Class for converting XML document to dynamic object</summary>
     public class XMLToDynamicConverter
     {
         /// <summary>Converts XML document to the dynamic object</summary>

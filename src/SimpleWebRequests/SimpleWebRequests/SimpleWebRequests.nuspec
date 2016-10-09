@@ -14,5 +14,7 @@
     <releaseNotes>First release.</releaseNotes>
     <copyright>Copyright 2016 Denis Babarykin</copyright>
     <tags>REST request web simple requests get post dynamic json .net</tags>
+	<language>en-us</language>
+	<references>$references$</references>
   </metadata>
 </package>

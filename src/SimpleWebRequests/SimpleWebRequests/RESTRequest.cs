@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SimpleWebRequests.Converters;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -11,12 +13,13 @@ using System.Xml.Linq;
 
 namespace SimpleWebRequests
 {
-    /// <summary>Class for REST requests.</summary>
+    /// <summary>Class for REST requests</summary>
     public class RESTRequest
     {
         /// <summary>Async GET request to the api that responses in JSON format</summary>
+        /// <param name="url">String with url and parameters for GET request</param>
         /// <returns>Dynamic object with response data</returns>
-        public static async Task<dynamic> GetJSONAsync(string url)
+        public static async Task<dynamic> GetWithJsonResponseAsync(string url)
         {
             using (var client = new HttpClient())
             {
@@ -27,7 +30,7 @@ namespace SimpleWebRequests
                 if (response.IsSuccessStatusCode)
                 {
                     response.Content.Headers.ContentType.MediaType = "application/json";
-                    return response.Content.ReadAsAsync<ExpandoObject>().Result;
+                    return await response.Content.ReadAsAsync<ExpandoObject>();
                 }
                 else
                     throw new HttpRequestException("Error in GetJSONAsync() with param: " + url);
@@ -35,8 +38,9 @@ namespace SimpleWebRequests
         }
 
         /// <summary>Async GET request to the api that responses in text/html format</summary>
+        /// <param name="url">String with url and parameters for GET request</param>
         /// <returns>String with response data</returns>
-        public static async Task<string> GetHTMLAsync(string url)
+        public static async Task<string> GetWithHtmlResponseAsync(string url)
         {
             using (var client = new HttpClient())
             {
@@ -46,16 +50,17 @@ namespace SimpleWebRequests
                 HttpResponseMessage response = await client.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
-                    return response.Content.ReadAsStringAsync().Result;
+                    return await response.Content.ReadAsStringAsync();
                 }
                 else
-                    throw new HttpRequestException("Error in GetHTML() with param: " + url);
+                    throw new HttpRequestException("Error in GetWithHtmlResponseAsync() with param: " + url);
             }
         }
 
         /// <summary>Async GET request to the api that responses in XML format</summary>
+        /// <param name="url">String with url and parameters for GET request</param>
         /// <returns>Dynamic object with response data</returns>
-        public static async Task<dynamic> GetXMLAsync(string url)
+        public static async Task<dynamic> GetWithXmlResponseAsync(string url)
         {
             var request = WebRequest.Create(url) as HttpWebRequest;
             request.Credentials = CredentialCache.DefaultNetworkCredentials;
@@ -64,35 +69,48 @@ namespace SimpleWebRequests
             return XMLToDynamicConverter.Convert(xDoc.Elements().First());
         }
 
-        /// <summary>Async POST request to the api and getting response</summary>
-        /// <param name="body">Body of POST request</param>
+        /// <summary>Async POST request with body of "x-www-form-urlencoded" type to the api that responses in JSON</summary>
+        /// <param name="url">String with url for POST request</param>
+        /// <param name="postRequestBody">Body of POST request that will be serialized to "application/x-www-form-urlencoded" media type</param>
         /// <returns>Dynamic object with response data</returns>
-        public static async Task<dynamic> PostJSONAsync(string url, Dictionary<string, string> body)
+        public static async Task<dynamic> PostAsUrlEncodedWithJsonResponseAsync(string url, IEnumerable<KeyValuePair<string, string>> postRequestBody)
         {
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response = await client.PostAsync(url, new FormUrlEncodedContent(body));
+                HttpResponseMessage response = await client.PostAsync(url, new FormUrlEncodedContent(postRequestBody));
                 if (response.IsSuccessStatusCode)
                 {
                     response.Content.Headers.ContentType.MediaType = "application/json";
-                    return response.Content.ReadAsAsync<ExpandoObject>().Result;
+                    return await response.Content.ReadAsAsync<ExpandoObject>();
                 }
                 else
-                    throw new HttpRequestException("Error in PostJSON() with params: " + url + " body: " + body.ToString());
+                    throw new HttpRequestException("Error in PostJSON() with params: " + url + " body: " + postRequestBody.ToString());
             }
         }
 
-        static string GetbaseAddress(string url)
+        /// <summary>Async POST request with body of JSON type to the api that responses in JSON</summary>
+        /// <param name="url">String with url for POST request</param>
+        /// <param name="postRequestBody">Body of POST request that will be serialized to JSON</param>
+        /// <returns>Dynamic object with response data</returns>
+        public static async Task<dynamic> PostAsJsonWithJsonResponseAsync(string url, object postRequestBody)
         {
-            return url.Substring(0, url.IndexOf("?"));
-        }
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        static string GetParams(string url)
-        {
-            return url.Substring(url.IndexOf("?"));
+                HttpResponseMessage response = await client.PostAsync(url, new StringContent(await Task.Factory.StartNew(() => JsonConvert.SerializeObject(postRequestBody)), Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    response.Content.Headers.ContentType.MediaType = "application/json";
+                    return await response.Content.ReadAsAsync<ExpandoObject>();
+                }
+                else
+                    throw new HttpRequestException("Error in PostAsJsonWithJsonResponseAsync() with params: " + url + " body: " + postRequestBody.ToString());
+            }
         }
     }
 }
