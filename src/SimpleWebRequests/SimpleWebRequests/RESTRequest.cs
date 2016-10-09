@@ -10,12 +10,15 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Reflection;
 
 namespace SimpleWebRequests
 {
     /// <summary>Class for REST requests</summary>
     public class RESTRequest
     {
+        #region Dynamic methods
+
         /// <summary>GET request to the api that responses in JSON format</summary>
         /// <param name="url">String with url and parameters for GET request</param>
         /// <returns>Dynamic object with response data</returns>
@@ -33,7 +36,7 @@ namespace SimpleWebRequests
                     return response.Content.ReadAsAsync<ExpandoObject>().Result;
                 }
                 else
-                    throw new HttpRequestException("Error in GetJSONAsync() with param: " + url);
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
             }
         }
 
@@ -54,7 +57,7 @@ namespace SimpleWebRequests
                     return await response.Content.ReadAsAsync<ExpandoObject>();
                 }
                 else
-                    throw new HttpRequestException("Error in GetJSONAsync() with param: " + url);
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
             }
         }
 
@@ -72,7 +75,7 @@ namespace SimpleWebRequests
                 if (response.IsSuccessStatusCode)
                     return response.Content.ReadAsStringAsync().Result;
                 else
-                    throw new HttpRequestException("Error in GetWithHtmlResponseAsync() with param: " + url);
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
             }
         }
 
@@ -90,7 +93,7 @@ namespace SimpleWebRequests
                 if (response.IsSuccessStatusCode)
                     return await response.Content.ReadAsStringAsync();
                 else
-                    throw new HttpRequestException("Error in GetWithHtmlResponseAsync() with param: " + url);
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
             }
         }
 
@@ -136,7 +139,7 @@ namespace SimpleWebRequests
                     return response.Content.ReadAsAsync<ExpandoObject>().Result;
                 }
                 else
-                    throw new HttpRequestException("Error in PostJSON() with params: " + url + " body: " + postRequestBody.ToString());
+                    throw new HttpRequestException(string.Format("Error in {0} with params url: {1} and body: {2} ", MethodBase.GetCurrentMethod().Name, url, postRequestBody.ToString()));
             }
         }
 
@@ -158,7 +161,7 @@ namespace SimpleWebRequests
                     return await response.Content.ReadAsAsync<ExpandoObject>();
                 }
                 else
-                    throw new HttpRequestException("Error in PostJSON() with params: " + url + " body: " + postRequestBody.ToString());
+                    throw new HttpRequestException(string.Format("Error in {0} with params url: {1} and body: {2} ", MethodBase.GetCurrentMethod().Name, url, postRequestBody.ToString()));
             }
         }
 
@@ -180,7 +183,7 @@ namespace SimpleWebRequests
                     return response.Content.ReadAsAsync<ExpandoObject>().Result;
                 }
                 else
-                    throw new HttpRequestException("Error in PostAsJsonWithJsonResponseAsync() with params: " + url + " body: " + postRequestBody.ToString());
+                    throw new HttpRequestException(string.Format("Error in {0} with params url: {1} and body: {2} ", MethodBase.GetCurrentMethod().Name, url, postRequestBody.ToString()));
             }
         }
 
@@ -202,8 +205,10 @@ namespace SimpleWebRequests
                     return await response.Content.ReadAsAsync<ExpandoObject>();
                 }
                 else
-                    throw new HttpRequestException("Error in PostAsJsonWithJsonResponseAsync() with params: " + url + " body: " + postRequestBody.ToString());
+                    throw new HttpRequestException(string.Format("Error in {0} with params url: {1} and body: {2} ", MethodBase.GetCurrentMethod().Name, url, postRequestBody.ToString()));
             }
         }
+
+        #endregion
     }
 }
