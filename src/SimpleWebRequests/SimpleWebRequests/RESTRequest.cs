@@ -40,6 +40,29 @@ namespace SimpleWebRequests
             }
         }
 
+        /// <summary>GET request to the api that responses in JSON format</summary>
+        /// <param name="url">Url of request</param>
+        /// <param name="requestParameters">Parameters for GET request as key-value pairs</param>
+        /// <returns>Dynamic object with response data</returns>
+        public static dynamic GetWithJsonResponse(string url, IEnumerable<KeyValuePair<string, string>> requestParameters)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                string urlWithParams = string.Format("{0}?{1}", url, KeyValueToStringConverter.Convert(requestParameters));
+                HttpResponseMessage response = client.GetAsync(urlWithParams).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    response.Content.Headers.ContentType.MediaType = "application/json";
+                    return response.Content.ReadAsAsync<ExpandoObject>().Result;
+                }
+                else
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
+            }
+        }
+
         /// <summary>Async GET request to the api that responses in JSON format</summary>
         /// <param name="url">String with url and parameters for GET request</param>
         /// <returns>Dynamic object with response data</returns>
@@ -51,6 +74,29 @@ namespace SimpleWebRequests
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 HttpResponseMessage response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    response.Content.Headers.ContentType.MediaType = "application/json";
+                    return await response.Content.ReadAsAsync<ExpandoObject>();
+                }
+                else
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
+            }
+        }
+
+        /// <summary>Async GET request to the api that responses in JSON format</summary>
+        /// <param name="url">Url of request</param>
+        /// <param name="requestParameters">Parameters for GET request as key-value pairs</param>
+        /// <returns>Dynamic object with response data</returns>
+        public static async Task<dynamic> GetWithJsonResponseAsync(string url, IEnumerable<KeyValuePair<string, string>> requestParameters)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                string urlWithParams = string.Format("{0}?{1}", url, KeyValueToStringConverter.Convert(requestParameters));
+                HttpResponseMessage response = await client.GetAsync(urlWithParams);
                 if (response.IsSuccessStatusCode)
                 {
                     response.Content.Headers.ContentType.MediaType = "application/json";
@@ -79,6 +125,26 @@ namespace SimpleWebRequests
             }
         }
 
+        /// <summary>GET request to the api that responses in text/html format</summary>
+        /// <param name="url">String with url</param>
+        /// <param name="requestParameters">Parameters for GET request as key-value pairs</param>
+        /// <returns>String with response data</returns>
+        public static string GetWithHtmlResponse(string url, IEnumerable<KeyValuePair<string, string>> requestParameters)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
+
+                string urlWithParams = string.Format("{0}?{1}", url, KeyValueToStringConverter.Convert(requestParameters));
+                HttpResponseMessage response = client.GetAsync(urlWithParams).Result;
+                if (response.IsSuccessStatusCode)
+                    return response.Content.ReadAsStringAsync().Result;
+                else
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
+            }
+        }
+
         /// <summary>Async GET request to the api that responses in text/html format</summary>
         /// <param name="url">String with url and parameters for GET request</param>
         /// <returns>String with response data</returns>
@@ -90,6 +156,26 @@ namespace SimpleWebRequests
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
 
                 HttpResponseMessage response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                    return await response.Content.ReadAsStringAsync();
+                else
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
+            }
+        }
+
+        /// <summary>Async GET request to the api that responses in text/html format</summary>
+        /// <param name="url">String with url</param>
+        /// <param name="requestParameters">Parameters for GET request as key-value pairs</param>
+        /// <returns>String with response data</returns>
+        public static async Task<string> GetWithHtmlResponseAsync(string url, IEnumerable<KeyValuePair<string, string>> requestParameters)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
+
+                string urlWithParams = string.Format("{0}?{1}", url, KeyValueToStringConverter.Convert(requestParameters));
+                HttpResponseMessage response = await client.GetAsync(urlWithParams);
                 if (response.IsSuccessStatusCode)
                     return await response.Content.ReadAsStringAsync();
                 else
@@ -109,12 +195,40 @@ namespace SimpleWebRequests
             return XMLToDynamicConverter.Convert(xDoc.Elements().First());
         }
 
+        /// <summary>GET request to the api that responses in XML format</summary>
+        /// <param name="url">String with url</param>
+        /// <param name="requestParameters">Parameters for GET request as key-value pairs</param>
+        /// <returns>Dynamic object with response data</returns>
+        public static dynamic GetWithXmlResponse(string url, IEnumerable<KeyValuePair<string, string>> requestParameters)
+        {
+            string urlWithParams = string.Format("{0}?{1}", url, KeyValueToStringConverter.Convert(requestParameters));
+            var request = WebRequest.Create(urlWithParams) as HttpWebRequest;
+            request.Credentials = CredentialCache.DefaultNetworkCredentials;
+            var xDoc = XDocument.Load(request.GetResponse().GetResponseStream());
+
+            return XMLToDynamicConverter.Convert(xDoc.Elements().First());
+        }
+
         /// <summary>Async GET request to the api that responses in XML format</summary>
         /// <param name="url">String with url and parameters for GET request</param>
         /// <returns>Dynamic object with response data</returns>
         public static async Task<dynamic> GetWithXmlResponseAsync(string url)
         {
             var request = WebRequest.Create(url) as HttpWebRequest;
+            request.Credentials = CredentialCache.DefaultNetworkCredentials;
+            var xDoc = XDocument.Load((await request.GetResponseAsync()).GetResponseStream());
+
+            return XMLToDynamicConverter.Convert(xDoc.Elements().First());
+        }
+
+        /// <summary>Async GET request to the api that responses in XML format</summary>
+        /// <param name="url">String with url</param>
+        /// <param name="requestParameters">Parameters for GET request as key-value pairs</param>
+        /// <returns>Dynamic object with response data</returns>
+        public static async Task<dynamic> GetWithXmlResponseAsync(string url, IEnumerable<KeyValuePair<string, string>> requestParameters)
+        {
+            string urlWithParams = string.Format("{0}?{1}", url, KeyValueToStringConverter.Convert(requestParameters));
+            var request = WebRequest.Create(urlWithParams) as HttpWebRequest;
             request.Credentials = CredentialCache.DefaultNetworkCredentials;
             var xDoc = XDocument.Load((await request.GetResponseAsync()).GetResponseStream());
 
@@ -235,6 +349,29 @@ namespace SimpleWebRequests
             }
         }
 
+        /// <summary>GET request to the api that responses in JSON format</summary>
+        /// <param name="url">String with url</param>
+        /// <param name="requestParameters">Parameters for GET request as key-value pairs</param>
+        /// <returns>Object of given generic type with response data</returns>
+        public static T GetWithJsonResponse<T>(string url, IEnumerable<KeyValuePair<string, string>> requestParameters)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                string urlWithParams = string.Format("{0}?{1}", url, KeyValueToStringConverter.Convert(requestParameters));
+                HttpResponseMessage response = client.GetAsync(urlWithParams).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    response.Content.Headers.ContentType.MediaType = "application/json";
+                    return response.Content.ReadAsAsync<T>().Result;
+                }
+                else
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
+            }
+        }
+
         /// <summary>Async GET request to the api that responses in JSON format</summary>
         /// <param name="url">String with url and parameters for GET request</param>
         ///<returns>Object of given generic type with response data</returns>
@@ -246,6 +383,29 @@ namespace SimpleWebRequests
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 HttpResponseMessage response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    response.Content.Headers.ContentType.MediaType = "application/json";
+                    return await response.Content.ReadAsAsync<T>();
+                }
+                else
+                    throw new HttpRequestException(string.Format("Error in {0} with param url: {1}", url, MethodBase.GetCurrentMethod().Name));
+            }
+        }
+
+        /// <summary>Async GET request to the api that responses in JSON format</summary>
+        /// <param name="url">String with url</param>
+        /// <param name="requestParameters">Parameters for GET request as key-value pairs</param>
+        /// <returns>Object of given generic type with response data</returns>
+        public static async Task<T> GetWithJsonResponseAsync<T>(string url, IEnumerable<KeyValuePair<string, string>> requestParameters)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                string urlWithParams = string.Format("{0}?{1}", url, KeyValueToStringConverter.Convert(requestParameters));
+                HttpResponseMessage response = await client.GetAsync(urlWithParams);
                 if (response.IsSuccessStatusCode)
                 {
                     response.Content.Headers.ContentType.MediaType = "application/json";
