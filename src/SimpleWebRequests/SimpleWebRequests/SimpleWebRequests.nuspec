@@ -11,9 +11,9 @@
     <iconUrl>https://raw.githubusercontent.com/DenisBabarykin/SimpleWebRequests/master/nuget_icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Synchronous and generic versions of methods added. Names of methods improved</releaseNotes>
+    <releaseNotes>Synchronous and generic versions of methods added. Names of methods improved. Overload methods for GET requests with parameters as key-value collection are added.</releaseNotes>
     <copyright>Copyright 2016 Denis Babarykin</copyright>
-    <tags>REST request web simple requests get post dynamic json .net</tags>
+    <tags>REST request web simple requests get post dynamic json .net xml html</tags>
 	<language>en-us</language>
 	<references>$references$</references>
 	<dependencies>
