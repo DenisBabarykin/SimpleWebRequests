@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\KeyValueToStringConverter.cs" />
     <Compile Include="Converters\XMLToDynamicConverter.cs" />
     <Compile Include="RESTRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
